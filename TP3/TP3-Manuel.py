@@ -8,12 +8,13 @@ from bs4 import BeautifulSoup
 # C2: 2756
 # C5: 8632
 Captcha_challenge_number=3
+Value_BruteForce = 3000
+End_BruteForce = 4000
+
 # URL for captcha retrieval and form submission
 captcha_url = 'http://31.220.95.27:9002/captcha.php'
 submit_url = f'http://31.220.95.27:9002/captcha{Captcha_challenge_number}/'
 
-Value_BruteForce = 3000
-End_BruteForce = 4000
 session = requests.Session()
 
 init_response = session.post(submit_url)
