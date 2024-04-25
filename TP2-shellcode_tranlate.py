@@ -12,6 +12,10 @@ def error():
 
 
 def encode():
+    """
+    La fonction « encode » prend les entrées de l'utilisateur, les encode au format shellcode et imprime
+    la sortie.
+    """
     data = input("[<-] Input data to encode: ")
     print("[->] Output shellcode: ")
     shellcode = ""
@@ -23,6 +27,10 @@ def encode():
 
 
 def decode():
+    """
+    La fonction `decode` prend les entrées de l'utilisateur, supprime les caractères "\x", décode les
+    données au format hexadécimal et imprime le résultat décodé en rouge.
+    """
     data = input("Input data to decode: ")
     if data.find("\\x") == -1:
         error()
@@ -37,6 +45,9 @@ def decode():
 
 
 def main():
+    """
+    La fonction principale invite l'utilisateur à choisir entre l'encodage et le décodage du shellcode.
+    """
     print("ShellCode encode decode")
     mode = input(
         "[<-] Input %s1[encode]%s or %s2[decode]%s:" % (RED, RESET, RED, RESET)
